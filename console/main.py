@@ -24,62 +24,62 @@ current_tests = []
 
 class DadaProcessor():
     @staticmethod
-    def getAllData(name_of_file):
+    def get_all_data(name_of_file):
         with open(name_of_file, "r") as file:
             all_data = json.load(file)
         return all_data
 
     @staticmethod
-    def setAllData(name_of_file, all_data):
+    def set_all_data(name_of_file, all_data):
         with open(name_of_file, "w") as file:
             json.dump(all_data, file, indent=2)
     
     @staticmethod
-    def uploadCountOfTest():
-        all_data = DadaProcessor.getAllData("source/data.json")
+    def uplouad_count_of_test():
+        all_data = DadaProcessor.get_all_data("source/data.json")
         count_of_test = all_data["count of elements"]
         return count_of_test
 
     @staticmethod
-    def loadAllTest():
-        all_data = DadaProcessor.getAllData("source/data.json")
+    def load_all_test():
+        all_data = DadaProcessor.get_all_data("source/data.json")
         all_test = all_data["data of tests"]
         return all_test
 
     @staticmethod
-    def uploudTests():
-        count_of_test = DadaProcessor.uploadCountOfTest()
-        all_test = DadaProcessor.loadAllTest()
+    def upload_test():
+        count_of_test = DadaProcessor.uplouad_count_of_test()
+        all_test = DadaProcessor.load_all_test()
         
         global current_tests
 
         all_test += current_tests
         count_of_test += len(current_tests)
 
-        all_data = DadaProcessor.getAllData("source/data.json")
+        all_data = DadaProcessor.get_all_data("source/data.json")
 
         all_data["data of tests"] = all_test
         all_data["count of elements"] = count_of_test
             
-        DadaProcessor.setAllData("source/data.json" ,all_data)
+        DadaProcessor.set_all_data("source/data.json" ,all_data)
         current_tests = []
 
     @staticmethod
-    def saveName(name):
-        all_config = DadaProcessor.getAllData("source/config.json")
+    def save_name(name):
+        all_config = DadaProcessor.get_all_data("source/config.json")
 
         all_config["name"] = name
 
-        DadaProcessor.setAllData("source/config.json", all_config)
+        DadaProcessor.set_all_data("source/config.json", all_config)
 
     @staticmethod
-    def getName():
-        all_config = DadaProcessor.getAllData("source/config.json")
+    def get_name():
+        all_config = DadaProcessor.get_all_data("source/config.json")
         name = all_config["name"]
         return name
 
     @staticmethod
-    def getAllSentenses():
+    def get_all_sentenses():
         all_sentenses = []
         with open("source/sentenses.txt") as file:
             for line in file:
@@ -95,11 +95,11 @@ class Console():
         self.index_in_str = 0
         self.stdsrc.clear()
 
-    def transportToNextLine(self):
+    def transport_to_next_line(self):
         self.number_str += 1
         self.index_in_str = 0
 
-    def sendMessage(self, message, color, without_move=False):
+    def send_message(self, message, color, without_move=False):
         self.stdsrc.addstr(self.number_str, self.index_in_str, message, color)
         if not without_move:
             temp = self.index_in_str + len(message)
@@ -107,17 +107,17 @@ class Console():
             self.number_str += temp // curses.COLS
             self.stdsrc.refresh()
             if len(message) >= 1 and message[-1] == "\n":
-                self.transportToNextLine()
+                self.transport_to_next_line()
 
-    def getChar(self):
+    def get_char(self):
         return self.stdsrc.getkey()
     
-    def getMessage(self, is_blind=True):
+    def get_message(self, is_blind=True):
         start_srt = self.number_str
         start_index_in_srt = self.index_in_str
         message = ""
         while True:
-            key = self.getChar()
+            key = self.get_char()
 
             if key == "KEY_BACKSPACE":
                 if self.index_in_str != start_index_in_srt or self.number_str != start_srt:
@@ -131,7 +131,7 @@ class Console():
                 continue
             else:
                 if not is_blind:
-                    self.sendMessage(key, curses.color_pair(1))
+                    self.send_message(key, curses.color_pair(1))
                 message += key
             if key in end_of_input:
                 break
@@ -151,20 +151,20 @@ def start(stdsrc):
     curses.init_pair(2, curses.COLOR_BLUE, curses.COLOR_BLACK)
     curses.init_pair(3, curses.COLOR_GREEN, curses.COLOR_BLACK)
 
-    name = DadaProcessor.getName()
+    name = DadaProcessor.get_name()
     if name == "":
         name = initialize()
-    DadaProcessor.saveName(name)
-    console.sendMessage("hello " + name, curses.color_pair(1))
+    DadaProcessor.save_name(name)
+    console.send_message("hello " + name, curses.color_pair(1))
     global all_sentenses
-    all_sentenses = DadaProcessor.getAllSentenses()
+    all_sentenses = DadaProcessor.get_all_sentenses()
 
 def initialize():
-    console.sendMessage("enter your name", curses.color_pair(1))
-    console.transportToNextLine()
-    return console.getMessage(is_blind=False)
+    console.send_message("enter your name", curses.color_pair(1))
+    console.transport_to_next_line()
+    return console.get_message(is_blind=False)
 
-def generateText():
+def generate_text():
     count_of_sentenses = random.randint(1, 2)
     ans = ""
     for i in range(count_of_sentenses):
@@ -176,16 +176,16 @@ def generateText():
     return ans
 
 def test():
-    text = generateText()
+    text = generate_text()
     num_in_text = 0
     count_error = 0
     speed = 0
-    console.sendMessage(text, color=curses.color_pair(2), without_move=True)
-    #console.transportToNextLine()
+    console.send_message(text, color=curses.color_pair(2), without_move=True)
+    #console.transport_to_next_line()
 
     is_start = False
     while num_in_text < len(text):
-        char = console.getChar()
+        char = console.get_char()
 
         if not is_start:
             start = time.time()
@@ -194,26 +194,26 @@ def test():
         if char != text[num_in_text]:
             count_error += 1
         else:
-            console.sendMessage(char,color=curses.color_pair(3))
+            console.send_message(char,color=curses.color_pair(3))
             num_in_text += 1
 
     end = time.time()
     time_test = end - start
-    console.transportToNextLine()
+    console.transport_to_next_line()
     count_word_in_text = len(text.split())
     speed = int(count_word_in_text / time_test * 60)
 
-    console.sendMessage(f"your spped: {speed} your error {count_error}", curses.color_pair(2))
-    console.transportToNextLine()
+    console.send_message(f"your spped: {speed} your error {count_error}", curses.color_pair(2))
+    console.transport_to_next_line()
 
     current_tests.append(str(Test(count_word_in_text=count_word_in_text,
                               count_error=count_error,
                               speed=speed,
                               time_test=time_test)))
 
-def buildGrafic():
-    DadaProcessor.uploudTests()
-    all_test = DadaProcessor.loadAllTest()
+def build_grathic():
+    DadaProcessor.upload_test()
+    all_test = DadaProcessor.load_all_test()
     x = []
     y_speed = []
     y_error = []
@@ -230,35 +230,35 @@ def buildGrafic():
     plt.title("WPM grafic")
     plt.show()
 
-def printHelp():
-    console.sendMessage("""    commands:
+def print_help():
+    console.send_message("""    commands:
     start test
-    build grafic
+    build grathic
     exit""", curses. color_pair(1))
     for i in range(4):
-        console.transportToNextLine()
+        console.transport_to_next_line()
  
 
 def end(stdsrc):
-   DadaProcessor.uploudTests()
+   DadaProcessor.upload_test()
 
 def work(stdsrc):
     while True:
-        printHelp()
-        message = console.getMessage(is_blind=False)
+        print_help()
+        message = console.get_message(is_blind=False)
         message = message.strip()
-        console.transportToNextLine()
-        console.sendMessage(message, curses.color_pair(1))
+        console.transport_to_next_line()
+        console.send_message(message, curses.color_pair(1))
         console.clear()
         if message == "exit":
             break
-        if message == "build grafic":
-            buildGrafic()
+        if message == "build grathic":
+            build_grathic()
         if message == "start test":
             test()
         else:
-            console.sendMessage("not command " + message, curses.color_pair(1))
-            console.transportToNextLine()
+            console.send_message("not command " + message, curses.color_pair(1))
+            console.transport_to_next_line()
 
 def main():
     #start()
