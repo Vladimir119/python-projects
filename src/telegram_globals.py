@@ -1,4 +1,3 @@
-TOKEN = "5558768378:AAFtuddYMOeGBpuUBpJEhbO9kcMr6xfeIrM"
 HELP_MESSAGE = """вас приветствует телеграм бот @mipt_ratings_bot
 он поддерживает следующий функционал:
     1)добавление новых списков элементов, для этого воспользуйтесь командой add list:
